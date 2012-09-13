@@ -20,11 +20,6 @@
                 sprintly-assignee-id
                 "in-progress"))
 
-(defadvice url-http-handle-authentication (around xyz-fix)
-  (unless sprintly-block-authorisation
-    ad-do-it))
-(ad-activate 'url-http-handle-authentication)
-
 (defun get-json (url)
   (let ((buffer (url-retrieve-synchronously url))
         (json nil))

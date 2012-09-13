@@ -15,3 +15,8 @@ Where type, number and title correspond to the sprintly [API definitions](http:/
     (setq sprintly-product-id "id")
 
 The assignee-id should be the id of the user that you want the items to be retrieve it from.
+
+After configuring the plugin, use the following keybinding in a org document to retrieve the items:
+
+    \M-n
+   

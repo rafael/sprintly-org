@@ -1,9 +1,24 @@
 (require 'json)
-(defvar sprintly-user-name "")
-(defvar sprintly-token "")
+(defcustom sprintly-user-name ""
+  "Sprintly email that authenticates with sprintly")
+(defcustom sprintly-token ""
+  "Sprintly API token")
+(defcustom sprintly-assignee-id ""
+  "Sprintly user ID that will be query for items")
+(defcustom sprintly-product-id ""
+  "Sprintly product ID that will be use to retrieve items")
+(defvar sprintly-base-api "https://sprint.ly/api/")
 
 (defvar sprintly-block-authorisation nil
   "Flag whether to block url.el's usual interactive authorisation procedure")
+
+(defun sprintly-active-items-url ()
+  (format "%s/%s/%s/items.json?assigned_to=%s&status=%s"
+                sprintly-base-api
+                "products"
+                sprintly-product-id
+                sprintly-assignee-id
+                "in-progress"))
 
 (defadvice url-http-handle-authentication (around xyz-fix)
   (unless sprintly-block-authorisation
@@ -32,7 +47,7 @@
         (title (plist-get plem :title)))
         (insert (format "* TODO %s #%d\n  Description: %s\n" type number title))))
 
-(defun get-number-titles (url)
+(defun retrieve-todos-entries (url)
   (let ((json (get-and-parse-json url)))
         (mapcar 'retrieve-elem-info json)))
 
@@ -45,7 +60,7 @@
            ("Authorization" . ,(concat "Basic "
                                        (base64-encode-string
                                         (concat sprintly-user-name ":" sprintly-token)))))))
-    (get-number-titles "https://sprint.ly/api/products/5139/items.json?assigned_to=6280&status=in-progress")))
+    (retrieve-todos-entries sprintly-active-items-url)))
 
 (add-hook 'org-mode-hook
           (lambda ()
